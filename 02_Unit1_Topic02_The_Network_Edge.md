@@ -1,7 +1,7 @@
 ---
 title: "Unit 1: The Network Edge"
 id: unit1-topic2
-tags: [unit1, network-edge, access-networks, hosts]
+tags: [unit1, network-edge, access-networks, hosts, dsl, ftth]
 aliases: [Network Edge]
 ---
 
@@ -30,20 +30,36 @@ It's a simple relationship: clients request, and servers serve.
 
 ## 2. Access Networks
 
-This is the crucial part. How do our end systems (clients) actually connect to the Internet? Through an **Access Network**. The access network is the physical link that connects an end system to its **edge router**.
+This is the crucial part. How do our end systems (clients) actually connect to the Internet? Through an **Access Network**. The access network is the network that physically connects an end system to its **edge router**.
 
-There are many technologies for this, broadly categorized by the physical medium they use.
+### a. Home Access
+This category includes technologies used to connect residential homes to their Internet Service Provider (ISP).
 
-### A. Home Access
-How do you connect from home?
-- **Digital Subscriber Line (DSL):** Uses the existing telephone line. A DSL modem separates data signals from phone signals. It's a "dedicated" line from your home to the phone company's central office.
-- **Cable:** Uses the existing cable television infrastructure. A cable modem is used. It's a "shared" medium, meaning you share the connection bandwidth with your neighbors.
-- **Fiber to the Home (FTTH):** The fastest option. It provides a direct fiber-optic connection to the home, offering incredible speeds.
+- **Digital Subscriber Line (DSL):**
+    - **Physical Medium:** Uses the existing telephone line (twisted-pair copper wire).
+    - **How it works:** A DSL modem separates data signals from traditional phone signals on the line. Frequencies are different, so you can surf the web and talk on the phone simultaneously.
+    - **Nature:** This is a **dedicated** connection from the home to the phone company's central office.
 
-### B. Enterprise (Company/University) Access
-- **Ethernet (LAN):** This is the most common technology for wired access in companies, universities, and schools. End systems connect via Ethernet switches, which in turn connect to the institutional router.
+- **Cable:**
+    - **Physical Medium:** Uses the existing cable television infrastructure (coaxial cable).
+    - **How it works:** A cable modem is used. Data is sent over specific frequency channels on the cable.
+    - **Nature:** This is a **shared** medium. Everyone in a neighborhood shares the same link, so performance can degrade if many people are using it heavily at the same time.
 
-### C. Wireless Access
+- **Fiber to the Home (FTTH):**
+    - **Physical Medium:** A dedicated optical fiber from the central office directly to the home.
+    - **How it works:** Provides for incredible speeds by converting electrical signals to light for transmission.
+    - **Nature:** A **dedicated** fiber link, offering the highest speeds and best performance.
+
+| Technology | Physical Medium | Nature | Common Equipment |
+|---|---|---|---|
+| **DSL** | Twisted-Pair Copper | Dedicated | DSL Modem |
+| **Cable** | Coaxial Cable | Shared | Cable Modem |
+| **FTTH** | Fiber-Optic Cable | Dedicated | Optical Network Terminal (ONT) |
+
+### b. Enterprise (Company/University) Access
+- **Ethernet (LAN):** This is the most common technology for wired access in companies, universities, and schools. End systems connect via Ethernet (twisted-pair copper wire) to an Ethernet switch, which in turn connects to the institutional router.
+
+### c. Wireless Access
 - **Wireless LAN (WLAN):** We all know this as **Wi-Fi**. In a WLAN, users connect wirelessly to an **Access Point (AP)**, which is then connected via a wired link (usually Ethernet) to the broader network.
 - **Wide-Area Wireless Access:** This is what our smartphones use, connecting via a cellular provider's network (e.g., 4G, 5G). The connection is made to a nearby cell tower.
 
@@ -56,20 +72,25 @@ How do you connect from home?
                          ^
                          |
                   +----------------+
-                  |  Edge Router   |  <-- First router in the provider's network
+                  |  Edge Router   |  <-- First router in the ISP's network
                   +----------------+
-                   ^    ^         ^
-                   |    |         |
-(Access Networks)  |    |         |
-+------------------+----+------------------+
-|                  |    |                  |
-DSL/Cable/Fiber  Ethernet (LAN)         Wi-Fi/5G
-(Home)           (Enterprise)         (Wireless)
-|                  |    |                  |
-v                  v    v                  v
-+----+            +----+ +----+           +----+
-| PC |            | PC | | PC |           | Phn|
-+----+            +----+ +----+           +----+
+                   ^      ^         ^
+                   |      |         |
+(Access Networks)  |      |         |
++------------------+------+------------------+
+|                  |      |                  |
+Home Access      Enterprise Access    Wireless Access
+(DSL/Cable/Fiber)  (Ethernet)           (Wi-Fi/5G)
+|                  |                         |
+v                  v                         v
++-------+        +-------+               +----------+
+| Modem |        | Switch|               | Access   |
++-------+        +-------+               | Point/Tower|
+    |                  |                         |
+    v                  v                         v
++----+            +----+ +----+               +----+
+| PC |            | PC | | PC |               |Phne|
++----+            +----+ +----+               +----+
  (End Systems at the Network Edge)
 ```
 
@@ -80,12 +101,11 @@ v                  v    v                  v
 - **2-Mark Questions:**
     - What comprises the network edge? (Hosts and Access Networks).
     - Differentiate between a client and a server.
-    - What is an access network? Give two examples. (e.g., DSL, Cable).
-    - Is a home Cable internet connection a dedicated or shared medium? (Shared).
+    - Is a home Cable internet connection a dedicated or shared medium? Explain why. (Shared, because neighbors share the same physical cable line capacity).
 
 - **Potential 10-Mark Question:**
-    - "Describe the different types of access networks used to connect end systems to the Internet. Explain at least three in detail."
-        - **Tip:** Start by defining the network edge and access networks. Then, choose three technologies (e.g., DSL, Cable, and FTTH or Wi-Fi). For each, explain the medium it uses, the equipment involved (modem/AP), and whether it's dedicated or shared. A simple diagram will fetch extra marks.
+    - "Describe the different types of access networks used to connect end systems to the Internet. For home access, compare and contrast DSL, Cable, and FTTH."
+        - **Tip:** Start by defining the network edge and access networks. Then, create a table (like the one above) to compare the three home access technologies based on their physical medium and shared/dedicated nature. Finish by briefly describing enterprise (Ethernet) and wireless access.
 
 ---
 
