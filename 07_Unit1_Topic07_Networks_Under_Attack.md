@@ -1,62 +1,57 @@
 ---
 title: "Unit 1: Networks Under Attack"
 id: unit1-topic7
-tags: [unit1, security, malware, dos, ddos, sniffing, spoofing]
+tags: [unit1, security, malware, dos, mitm, sniffing, spoofing]
 aliases: [Network Security Threats]
 ---
 
 # Unit 1, Topic 7: Networks Under Attack
 
-The Internet connects billions of devices and transmits vast amounts of sensitive data. Unfortunately, this makes it a prime target for malicious activity. This topic provides a brief overview of the common ways networks are attacked.
+The Internet connects billions of devices, making it a prime target for malicious activity. This topic provides an overview of the common ways networks are attacked.
 
 > [!warning] A Sobering Fact
-> The Internet was originally designed with a goal of open, trusted communication among a small group of researchers. Security was not a primary design consideration, and the consequences of this are still being dealt with today.
+> The Internet was originally designed for open, trusted communication. Security was not a primary design consideration, and the consequences of this are still being dealt with today.
 
 ---
 
-## 1. Malware
+## 1. The Goals of Network Security (The CIA Triad)
 
-Malware (malicious software) is any software intentionally designed to cause damage to a computer, server, client, or computer network.
-
-- **Viruses:** Malicious code that attaches itself to executable files. A virus requires a user to run the infected file to spread.
-- **Worms:** A more active form of malware. A worm can self-replicate and spread from computer to computer without any user interaction, often by exploiting a security vulnerability in the target system.
-- **Botnet:** A network of thousands of malware-infected computers (called "bots"), which can be controlled remotely by an attacker (the "botmaster") to launch large-scale attacks.
+Before looking at attacks, it's helpful to understand what network security aims to protect. The goals are often summarized by the "CIA Triad":
+- **Confidentiality:** Ensuring that data is only readable by authorized parties. Packet sniffing and MitM attacks violate this.
+- **Integrity:** Ensuring that data has not been altered in transit.
+- **Availability:** Ensuring that the network and its services are available to legitimate users. DoS attacks directly violate this.
 
 ---
 
-## 2. Denial-of-Service (DoS) Attacks
+## 2. Common Forms of Attack
 
-The goal of a DoS attack is not to steal information, but to render a network, host, or other resource **unavailable** to its legitimate users.
+### a. Malware
+Malware (malicious software) is any software designed to cause damage or compromise a system.
+- **Viruses & Worms:** Viruses attach to files and require user action to spread. Worms are more active and can self-propagate across the network by exploiting vulnerabilities.
+- **Botnet:** A network of thousands of malware-infected computers (called "zombies" or "bots"), which can be controlled remotely by an attacker to launch large-scale attacks.
 
-There are three main categories:
-
-### a. Bandwidth Flooding
-The attacker sends a massive volume of packets to the target's network link, congesting it with useless traffic. Legitimate packets are unable to get through.
-
-### b. Connection Flooding
-The attacker establishes a large number of TCP connections with the target server. Since servers have a finite limit on the number of connections they can maintain, this can exhaust the server's resources, preventing legitimate users from connecting.
-
-### c. Distributed Denial-of-Service (DDoS)
-This is the most powerful and common form of DoS. The attacker uses a botnet (see above) to launch a bandwidth flood from many different sources simultaneously.
+### b. Denial-of-Service (DoS) Attacks
+The goal of a DoS attack is to render a resource **unavailable** to its legitimate users by overwhelming it with bogus traffic.
+- **Distributed Denial-of-Service (DDoS):** This is the most powerful form of DoS, launched from a botnet.
 
 ```ascii
 +----------+
 | Attacker |
 +----------+
-     |
+     | (Issues commands)
      v
 +----------+
-| Botnet C&C| (Command & Control)
+| Botnet C&C| (Command & Control Server)
 +----------+
      |
      +--------------------------+
      |           |              |
      v           v              v
 +----------+ +----------+   +----------+
-| Bot Host | | Bot Host |...| Bot Host |
+| Zombie 1 | | Zombie 2 |...| Zombie N | (Compromised Hosts)
 +----------+ +----------+   +----------+
      |           |              |
-     +-----------+--------------+
+     +----(Coordinated Flood)---+
                  |
                  v
            +----------+
@@ -64,41 +59,28 @@ This is the most powerful and common form of DoS. The attacker uses a botnet (se
            |  Server  |
            +----------+
 ```
-Because the attack traffic comes from thousands of different IP addresses, it is very difficult to distinguish from legitimate traffic and block effectively.
+Because the attack traffic comes from thousands of different sources, it is very difficult to block.
 
----
+### c. Man-in-the-Middle (MitM) Attack
+In a MitM attack, the attacker secretly positions themselves between two communicating parties.
+- **How it works:** The attacker intercepts the communication, relaying messages between the two parties and making them believe they are talking directly to each other.
+- **Threat:** The attacker can eavesdrop on the entire conversation (violating confidentiality) and even alter the messages in transit (violating integrity). A common place for this is on an unsecured public Wi-Fi network.
 
-## 3. Packet Sniffing
+### d. Packet Sniffing
+This is a passive attack where the attacker records a copy of every packet that passes by.
+- **Defense:** The best defense against sniffing is **encryption** (e.g., using HTTPS, WPA2/3). If data is encrypted, an attacker can still sniff the packets, but the content will be unreadable to them.
 
-A **packet sniffer** is a program that can record a copy of every packet that passes by it.
-
-- **How it works:** An attacker places a sniffer on a network (e.g., a compromised machine or a malicious Wi-Fi access point). They can then "eavesdrop" on all traffic.
-- **Defense:** The best defense against sniffing is **encryption**. If data is encrypted (like with HTTPS for websites), an attacker can sniff the packets, but the content will be unreadable garbage to them.
-
----
-
-## 4. IP Spoofing
-
-This is the act of creating an IP packet with a **forged source IP address**.
-
-- **How it works:** An attacker sends a packet but puts a different, fake IP address in the "from" field.
-- **Why it's used:**
-    - To hide the attacker's true identity.
-    - To perform certain attacks where the attacker doesn't need to see the response from the target (e.g., some types of DoS attacks).
+### e. IP Spoofing
+This is the act of creating an IP packet with a **forged source IP address** to hide the sender's identity or impersonate another system.
 
 ---
 
 ## Exam Focus
 
 - **2-Mark Questions:**
+    - What are the three goals of the CIA security triad? (Confidentiality, Integrity, Availability).
     - Define a DDoS attack.
-    - What is the difference between a virus and a worm?
-    - What is packet sniffing? What is the primary defense against it?
-    - Define IP spoofing.
+    - What is a Man-in-the-Middle attack?
 - **10-Mark Question:**
-    - "Describe the main categories of attacks that networks face. Explain Denial-of-Service (DoS) attacks in detail, including the different types and the role of a botnet."
-        - **Tip:** Start by listing the main attack forms (Malware, DoS, Sniffing, Spoofing). Then, focus on DoS. Define its goal (unavailability). Explain bandwidth flooding and connection flooding. Finally, explain how a DDoS attack leverages a botnet to amplify the attack and make it harder to defend against. Use a diagram for the DDoS attack structure.
-
----
-
-With this understanding of the threats, we can better appreciate the security mechanisms we'll see in later units. The final topic in Unit 1 will be a look back at the history of the Internet.
+    - "Describe the main categories of attacks that networks face. For each, explain the threat it poses to the principles of confidentiality, integrity, or availability."
+        - **Tip:** Structure your answer by attack type. For DoS, link it to violating **Availability**. For Packet Sniffing and MitM, link them to violating **Confidentiality**. For MitM, also mention that it can violate **Integrity** if the attacker modifies packets. This shows a deeper understanding of the "why" behind security.
