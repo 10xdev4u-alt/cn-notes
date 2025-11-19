@@ -1,13 +1,13 @@
----
+--- 
 title: "Unit 1: Delay, Loss, and Throughput"
 id: unit1-topic4
-tags: [unit1, performance, delay, latency, throughput, packet-loss]
+tags: [unit1, performance, delay, latency, throughput, packet-loss, queuing]
 aliases: [Network Performance]
 ---
 
 # Unit 1, Topic 4: Delay, Loss, and Throughput
 
-We've established that the Internet uses packet switching, which has consequences. Unlike a dedicated circuit, performance can vary. The three key measures of performance in a packet-switched network are **delay**, **loss**, and **throughput**.
+We've established that the Internet uses packet switching. Unlike a dedicated circuit, its performance can vary. The three key measures of performance in a packet-switched network are **delay**, **loss**, and **throughput**.
 
 ---
 
@@ -17,91 +17,79 @@ When a packet travels from one host to another, it suffers several types of dela
 
 `Total Nodal Delay = Processing Delay + Queuing Delay + Transmission Delay + Propagation Delay`
 
-Let's break them down.
+```ascii
+      |--------------------|      (Packet is processed,      |-------------------|
+      | Transmission Delay |       waits in queue)            |Propagation Delay  |
+      +--------------------+                                 +-------------------+
+<--L/R-->                      <--d_proc + d_queue-->         <--------d/s-------->
+|       | Packet Arrives     |                    | Packet Placed   |           | Packet Received
++-------+--------------------+--------------------+-----------------+-----------+
+        ^                    ^                    ^                 ^
+        |                    |                    |                 |
+  Last bit of packet   First bit of packet   Last bit of packet   First bit of packet
+arrives at router    placed on out-link     placed on out-link    arrives at next node
+```
 
-### a. Processing Delay
-- **What it is:** The time a router takes to process the packet's header. This includes checking for bit errors and determining the output link.
+Let's break down these components.
+
+### a. Processing Delay (`d_proc`)
+- **What it is:** The time a router takes to process the packet's header, check for bit errors, and determine the output link.
 - **Duration:** Typically very short, on the order of microseconds (µs).
 
-### b. Queuing Delay
+### b. Queuing Delay (`d_queue`)
 - **What it is:** The time a packet waits in a queue (buffer) before it can be transmitted onto the next link.
-- **Duration:** Highly variable. It depends on the number of other packets already in the queue. If the link is busy, the queueing delay will be long. If the link is free, it can be zero. This is the most complex delay component to analyze.
+- **Duration:** Highly variable, ranging from zero to milliseconds or even seconds. This is the most complex delay component to analyze. It depends on the **traffic intensity**.
+    - Let `a` = the average rate of packet arrival (packets/sec).
+    - Let `L` = the average packet length (bits/packet).
+    - Let `R` = the link transmission rate (bits/sec).
+    - The traffic intensity is `La/R`.
+    - If `La/R` -> 0, queuing delay is minimal.
+    - If `La/R` -> 1, queuing delays become very large, approaching infinity.
+    - If `La/R` > 1, the queue will grow without bound, and packet loss will occur.
 
-### c. Transmission Delay
+### c. Transmission Delay (`d_trans`)
 - **What it is:** The time required to push all of the packet's bits onto the link. It's a function of the packet's length and the link's transmission rate.
 - **Formula:** `d_trans = L / R`
     - `L`: Packet length in bits
     - `R`: Link transmission rate in bits per second (bps)
-- **Example:** To send a 1,500-byte packet on a 10 Mbps link:
-    - `L = 1,500 bytes * 8 bits/byte = 12,000 bits`
-    - `R = 10 Mbps = 10,000,000 bps`
-    - `d_trans = 12,000 / 10,000,000 = 0.0012 seconds = 1.2 ms`
 
-### d. Propagation Delay
+### d. Propagation Delay (`d_prop`)
 - **What it is:** The time it takes for a bit to travel from the beginning to the end of the physical link. It's a function of the distance and the propagation speed of the medium.
 - **Formula:** `d_prop = d / s`
     - `d`: Length of the physical link in meters
-    - `s`: Propagation speed (typically close to the speed of light, ~2.5 x 10^8 m/s for fiber/copper).
-- **Example:** For a 25,000 km fiber optic link:
-    - `d = 25,000 km = 25,000,000 m`
-    - `s = 2.5 x 10^8 m/s`
-    - `d_prop = 25,000,000 / (2.5 x 10^8) = 0.1 seconds = 100 ms`
+    - `s`: Propagation speed (typically ~2.5 x 10^8 m/s).
 
 > [!tip] **Transmission vs. Propagation Delay Analogy**
-> Imagine a caravan of 100 cars (the packet) traveling on a 100 km highway (the link).
-> - **Transmission delay** is the time it takes for the entire caravan to get *onto* the highway. If one car can get on every second, it takes 100 seconds. This depends on the size of the caravan (L) and the rate of entry (R).
-> - **Propagation delay** is the time it takes for the *first car* to travel the entire 100 km length of the highway. This depends on the length of the highway (d) and the speed limit (s).
+> Imagine a caravan of 10 cars (the packet) on a 100 km highway (the link). The tollbooth can process one car every minute.
+> - **Transmission delay** is the time for the tollbooth to get the *entire caravan* onto the highway. `10 cars * 1 min/car = 10 minutes`. This depends on the caravan size (L) and the tollbooth rate (R).
+> - **Propagation delay** is the time for the *first car* to travel the 100 km length of the highway. If the speed limit is 100 km/hr, this is 1 hour. This depends on the highway length (d) and the speed (s).
 
 ---
 
 ## 2. Packet Loss
 
-- **What it is:** When a packet arrives at a router, it is directed to an output queue. If this queue is already full with other packets, the router has no place to store the newly arriving packet. It will **drop** the packet. This is called **packet loss**.
-- **Why it happens:** Congestion. The rate at which packets arrive exceeds the outgoing link's capacity for a period of time.
-- **Consequence:** For reliable protocols like TCP, a lost packet will be detected and retransmitted by the sender, which can further increase delay.
+- **What it is:** When a packet arrives at a router and the corresponding output queue is already full, the router has no choice but to **drop** the packet.
+- **Why it happens:** Congestion, which occurs when `La/R > 1` for a sustained period.
+- **Consequence:** For reliable protocols like TCP, a lost packet will be detected and retransmitted, but this takes time and consumes additional network resources.
 
 ---
 
 ## 3. Throughput
 
 - **What it is:** The rate (in bits per second) at which bits are successfully transferred between a sender and receiver.
-- **Bottleneck Link:** Throughput is not determined by how fast your local connection is. It's limited by the **slowest link** on the end-to-end path. This slowest link is called the **bottleneck link**.
+- **Bottleneck Link:** For any end-to-end path, the throughput is limited by the transmission rate of the **slowest link** on that path. This is the **bottleneck link**.
 
 ### Throughput Example
+Consider a file being transferred between two servers, traversing three links and two routers.
 
-Consider a file being transferred from a Server to a Client across two links:
+`Server A --- (R1=100) --- Router1 --- (R2=20) --- Router2 --- (R3=50) --- Server B`
+                                     `^`
+                                     `|`
+                                  `Other Traffic`
 
-`Server --- (R1=100 Mbps) --- Router --- (R2=10 Mbps) --- Client`
-
-- The server can send data at 100 Mbps.
-- The second link can only forward data at 10 Mbps.
-- The end-to-end throughput is therefore limited by the slowest link.
-- **Throughput = min(R1, R2) = min(100 Mbps, 10 Mbps) = 10 Mbps.**
-
----
-
-## Formulas & Problems
-
-### Formulas
-1.  **Transmission Delay:** `d_trans = L / R`
-2.  **Propagation Delay:** `d_prop = d / s`
-3.  **End-to-End Throughput:** `Throughput = min(R1, R2, ..., RN)` for a path with N links.
-
-### Practice Problem
-A host wants to send a 20,000-byte file to another host. The path consists of 2 links and one router.
-- Link 1: Rate = 10 Mbps, Distance = 5,000 km
-- Link 2: Rate = 2 Mbps, Distance = 2,000 km
-- Assume a propagation speed of 2.5 x 10^8 m/s.
-- Assume processing and queuing delays are zero.
-What is the total end-to-end delay to send the file?
-
-**Solution Approach:**
-1.  The file is sent as one large packet.
-2.  Total Delay = (Delay on Link 1) + (Delay on Link 2)
-3.  Delay on a link = Transmission Delay + Propagation Delay.
-4.  Calculate `d_trans1`, `d_prop1`, `d_trans2`, `d_prop2`.
-5.  Total Delay = `d_trans1` + `d_prop1` + `d_trans2` + `d_prop2`.
-(Solution will be in `00_Problems_and_Solutions.md`)
+- Even though Server A has a 100 Mbps connection, its throughput to Server B is constrained by the link with the lowest capacity, `R2`.
+- **End-to-end Throughput = min(R1, R2, R3) = min(100, 20, 50) = 20 Mbps.**
+- If the "Other Traffic" is also using 10 Mbps of the `R2` link, the throughput available for our connection would be further reduced to `20 - 10 = 10 Mbps`.
 
 ---
 
@@ -109,13 +97,12 @@ What is the total end-to-end delay to send the file?
 - **2-Mark Questions:**
   - List the four sources of nodal delay.
   - What is a bottleneck link?
-  - Under what condition does packet loss occur?
-  - Differentiate between transmission and propagation delay.
+  - What is traffic intensity, and what happens when it is greater than 1?
 - **10-Mark Calculation Problem:**
-  - You will be given a scenario with packet sizes, link rates, and distances, and asked to calculate the total end-to-end delay. Be very careful with units (bits vs. bytes, seconds vs. ms, km vs. m).
+  - You will be given a scenario with packet sizes, link rates, and distances, and asked to calculate the total end-to-end delay. Be very careful with units (bits vs. bytes, seconds vs. ms, km vs. m). The problem in the `00_Problems_and_Solutions.md` file is a perfect example of this.
+  - The "caravan" analogy is an excellent way to explain the difference between transmission and propagation delay in an exam.
 
 ---
 
 We have now covered the fundamental performance metrics. Next, we will see how all these pieces are organized conceptually in **Protocol Layers**.
-
 
