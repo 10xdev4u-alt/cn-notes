@@ -1,7 +1,7 @@
 ---
 title: Problems and Solutions
 id: problems
-tags: #problems #cs22501
+tags: [problems, cs22501]
 aliases: [Practice Problems]
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: Common Formulas
 id: formulas
-tags: #formulas #cs22501
+tags: [formulas, cs22501]
 aliases: [Formula Sheet]
 ---
 

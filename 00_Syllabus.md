@@ -1,9 +1,8 @@
 ---
 title: CS22501 Computer Networks Syllabus
 id: syllabus
-tags: #syllabus #cs22501
+tags: [syllabus, cs22501]
 aliases: [Course Syllabus]
-links: [[00_Index.md]]
 ---
 
 # CS22501 COMPUTER NETWORKS
