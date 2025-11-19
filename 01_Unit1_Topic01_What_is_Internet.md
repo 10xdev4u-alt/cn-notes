@@ -1,17 +1,17 @@
 ---
 title: "Unit 1: What is the Internet?"
 id: unit1-topic1
-tags: [unit1, internet, basics]
+tags: [unit1, internet, basics, protocol]
 aliases: [Introduction to the Internet]
 ---
 
 # Unit 1, Topic 1: What is the Internet?
 
-Welcome to the first topic of our journey into Computer Networks! Before we dive deep, let's start with the most fundamental question: What *is* the Internet?
+Welcome to our first topic. Before we dive deep, let's start with the most fundamental question: What *is* the Internet?
 
 We can view the Internet from two primary perspectives:
-1.  **The "Nuts and Bolts" View:** What are the physical components?
-2.  **The "Services" View:** What does it do for us?
+1.  **A "Nuts and Bolts" View:** What are the physical components?
+2.  **A "Services" View:** What does it do for us?
 
 Let's break these down.
 
@@ -19,74 +19,85 @@ Let's break these down.
 
 ## 1. The "Nuts and Bolts" Perspective
 
-From a hardware and infrastructure standpoint, the Internet is a massive, globally connected system of computer networks.
+From a hardware and infrastructure standpoint, the Internet is a massive, globally connected system of computer networks. The core components include:
 
-> [!note] Definition: A computer network is simply two or more computers connected together to share resources and exchange data. The Internet is a **network of networks**.
+- **Hosts or End Systems:** These are the devices at the edge of the Internet that we use every day: PCs, smartphones, servers in data centers, and smart IoT devices. They are called "end systems" because they sit at the edge of the network.
 
-The core components include:
+- **Communication Links:** These are the physical media that connect end systems. They come in various forms (e.g., fiber-optic cable, copper wire, radio links) and have different transmission rates, measured in **bits per second (bps)**.
 
-- **Hosts or End Systems:** These are the devices at the edge of the Internet that we use every day. Examples include your PC, smartphone, smart TV, servers in a data center, and even IoT devices like a smart thermostat. They are called "end systems" because they sit at the edge of the network.
+- **Packet Switches:** These are specialized devices that forward chunks of data, called **packets**, through the network. The two most common types are **Routers** (in the network core) and **Link-layer Switches** (in the access network).
 
-- **Communication Links:** These are the physical media that connect end systems. They come in various forms:
-    - **Wired:** Coaxial cable, Copper wire (like in LAN cables), Fiber-optic cable.
-    - **Wireless:** Radio waves (WiFi, 4G/5G cellular), Satellite links.
-    - **Transmission Rate:** The speed of a link is measured in **bits per second (bps)**. Common rates are Mbps (megabits), Gbps (gigabits), etc.
-
-- **Packet Switches:** These are specialized devices that forward data through the network. The two most common types are:
-    - **Routers:** Used in the network core to connect different networks.
-    - **Link-layer Switches:** Typically used in access networks (like your home or university campus).
-
-Data is sent through the network in chunks called **packets**. Imagine sending a large book through the mail. Instead of sending the whole book at once, you tear it into individual pages, send each page in a separate envelope, and the recipient reassembles them. The Internet does this with data.
+The entire system comes together to form a **network of networks**.
 
 ### Visualizing the Structure
 
-Here is a simple ASCII diagram to illustrate these components:
-
 ```ascii
-      +------------------+      +------------------+
-      | Smartphone (End)|      |   Server (End)   |
-      +------------------+      +------------------+
-              |                        |
-(Wireless Link)|                        |(Wired Link)
-              |                        |
-         +----------+            +----------+
-         |  Access  |            |  Access  |
-         |  Router  |------------|  Router  |
-         +----------+ (Network   +----------+
-                           Core)       |
-                                       |
-                                +------------------+
-                                |    PC (End)      |
-                                +------------------+
++-------------------------------------------------------------+
+|                        NETWORK EDGE                         |
+|                                                             |
+| +----------+      +----------+        +----------+          |
+| | Mobile   |      |   PC     |        | Server   |          |
+| +----------+      +----------+        +----------+          |
+|      |                 |                   |                |
+| (Wireless)             | (Wired)           | (Wired)        |
+|      |                 |                   |                |
+| +-----------------+  +-----------------+   |                |
+| | Access Point    |  | Ethernet Switch |   |                |
+| +-----------------+  +-----------------+   |                |
+|         |                  |               |                |
++---------|------------------|---------------|----------------+
+          |                  |               |
+          |                  |               |
++---------|------------------|---------------|----------------+
+|         v                  v               v                |
+| +-----------------+  +-----------------+  +-----------------+ |
+| |  Edge Router 1  |--|  Edge Router 2  |--|  Edge Router 3  | |
+| +-----------------+  +-----------------+  +-----------------+ |
+|         |                  |                                |
+|   ... --|------> NETWORK CORE (mesh of routers) <----|-- ...   |
+|                                                             |
++-------------------------------------------------------------+
 ```
 
 ---
 
 ## 2. The "Services" Perspective
 
-From a user's point of view, we don't often think about the routers and cables. We think about what the Internet allows us to do.
+From a user's point of view, the Internet is an **infrastructure that provides services to applications**.
 
-> [!note] Definition: From a services perspective, the Internet is an **infrastructure that provides services to applications**.
+These applications—like the Web, email, and streaming video—are what we interact with. The Internet provides a **programming interface** (the socket API) that allows these distributed applications to send and receive data without needing to know the complex details of the underlying infrastructure.
 
-These applications—like the Web, email, streaming video, and online gaming—are what we interact with. The Internet provides the underlying programming interface, often called **sockets**, that allows these applications to send and receive data.
+---
 
-This perspective highlights a key principle of the Internet's design: the separation of the applications from the underlying network. The network's job is simply to move data from one end system to another. It doesn't need to know *what* that data is (whether it's an email or a video frame).
+## 3. What is a Protocol?
+
+For communication to be successful, all parties involved must agree on a set of rules.
+
+> [!note] Definition: A **protocol** defines the format and the order of messages exchanged between two or more communicating entities, as well as the actions taken on the transmission and/or receipt of a message or other event.
+
+> [!analogy] Human Protocol for Asking the Time
+> 1.  You (Host A) make eye contact with someone (Host B).
+> 2.  You say, "Excuse me, do you have the time?" (A specific message format).
+> 3.  Host B receives the message and understands it.
+> 4.  Host B replies, "It's 2:30 PM." (Another specific message format).
+> 5.  You say, "Thank you."
+>
+> Network protocols (like HTTP, TCP, IP) are just more formal, unambiguous versions of this same idea for computers.
 
 ---
 
 ## Exam Focus
 
-For your exams, this topic is foundational. You can expect questions like:
-
 - **2-Mark Questions:**
     - Define the Internet. (Provide both "nuts and bolts" and "services" views).
+    - What is a protocol?
     - What is an end system? Give two examples.
-    - What is a packet switch?
-    - List two types of communication links.
+    - List two types of packet switches.
 
 - **Potential 10-Mark Question:**
-    - "Explain the components of the Internet from a 'nuts and bolts' perspective. Draw a simple diagram to illustrate the structure."
-        - **Tip:** Start by defining the Internet. Then, describe end systems, communication links, and packet switches in detail. Use the ASCII diagram provided and explain how they connect. Conclude by mentioning how data travels in packets.
+    - "Explain the key components of the Internet from a 'nuts and bolts' perspective. Draw a diagram to illustrate the structure and describe the role of protocols."
+        - **Tip:** Start by defining the Internet as a network of networks. Then, describe end systems, communication links, and packet switches. Crucially, use the diagram to show how the **network edge** (where end systems live) connects to the **network core** (the mesh of routers). Finish by defining what a protocol is and explaining that these components all use protocols to communicate with each other.
+
 
 ---
 
